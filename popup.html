@@ -5,6 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="popup.js"></script>
+  <link rel="stylesheet" href="/app.css">
 </head>
 
 <body>
@@ -14,6 +15,28 @@
 		</h1>
 
 		<div>
+      <!-- Ripped from: https://tailgrids.com/components/toggle-switch, style #4 -->
+      <!-- Toggle Switch -->
+      <label
+        for="toggle"
+        class="flex items-center cursor-pointer select-none text-stone-300">
+        <div class="relative">
+          <!-- Checkbox -->
+          <input
+            type="checkbox"
+            id="toggle"
+            class="peer sr-only"/>
+
+          <div class="block h-8 rounded-full box bg-gray-400 w-14 peer-checked:bg-blue-500">
+          </div>
+
+          <div
+            class="absolute flex items-center justify-center w-6 h-6 transition bg-white rounded-full
+            dot left-1 top-1 dark:bg-dark-5 peer-checked:translate-x-full peer-checked:dark:bg-white">
+          </div>
+        </div>
+      </label>
+
 			<input type="checkbox" id="focus-toggle" name="focus-mode" value="focus-mode" />
 			<label for="focus-toggle">Focus Mode</label>
 		</div>
