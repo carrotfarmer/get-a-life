@@ -3,7 +3,7 @@
  * Since focus mode's ideal behavior is device/session-specific, we use storage.localeCompare();
  */
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-	const currentFocusMode = await chrome.storage.local.get(["focusMode"]);
+	const { focusMode, blockedUrls } = await chrome.storage.local.get(["focusMode", "blockedUrls"]);
 
 	/* Reference: https://developer.chrome.com/docs/extensions/reference/tabs/#event-onUpdated
 	 * Only injects if "stats" is "complete"
@@ -26,7 +26,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 		target: { tabId }
 	};
 
-	if (currentFocusMode.focusMode === true) {
+	if (focusMode === true) {
 		chrome.scripting.executeScript(injection);
 	}
 });
@@ -54,3 +54,4 @@ const blockedUrls = [
 	"sina.com",
 	"weibo.com",
 ]
+chrome.storage.local.set({ blockedUrls });

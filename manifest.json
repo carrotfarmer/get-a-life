@@ -4,6 +4,7 @@
 	"author": "Dhruva Srinivas & Shine Chang",
 	"version": "0.0.0",
 	"description": "helping you (yes you), to get a life.",
+  "options_page": "options.html",
 	"action": {
 		"default_popup": "popup.html"
 	},
