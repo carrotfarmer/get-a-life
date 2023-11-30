@@ -3,7 +3,7 @@
  * Since focus mode's ideal behavior is device/session-specific, we use storage.localeCompare();
  */
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-	const { focusMode, blockedUrls } = await chrome.storage.local.get(["focusMode", "blockedUrls"]);
+	const { focusMode, blockedUrls, endTime } = await chrome.storage.local.get(["focusMode", "blockedUrls", "endTime"]);
 
 	/* Reference: https://developer.chrome.com/docs/extensions/reference/tabs/#event-onUpdated
 	 * Only injects if "stats" is "complete"
@@ -13,7 +13,14 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 
 	const { url } = tab;
 
-	if (!blockedUrls.some(blocked => url.includes(blocked))) {
+	const currTime = new Date().getTime();
+	const isSessionLapsed = currTime > endTime;
+
+	if (isSessionLapsed) {
+		await chrome.storage.local.set({ focusMode: false });
+	}
+
+	if (!blockedUrls.some(blocked => url.includes(blocked)) && isSessionLapsed) {
 		console.log("Imma let this slide: ", url);
 		return;
 	}
@@ -54,4 +61,5 @@ const blockedUrls = [
 	"sina.com",
 	"weibo.com",
 ]
+
 chrome.storage.local.set({ blockedUrls });

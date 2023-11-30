@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="popup.js"></script>
-  <link rel="stylesheet" href="/app.css">
+	<link rel="stylesheet" href="/app.css">
 </head>
 
 <body class="p-8">
@@ -14,30 +14,58 @@
 			get-a-life
 		</h1>
 
-    <p id="message"></p>
+		<p id="message"></p>
 
-		<div>
-      <!-- Ripped from: https://tailgrids.com/components/toggle-switch, style #4 -->
-      <!-- Toggle Switch -->
-      <label
-        for="toggle"
-        class="flex items-center cursor-pointer select-none text-stone-300">
-        <div class="relative">
-          <!-- Checkbox -->
-          <input
-            type="checkbox"
-            id="toggle"
-            class="peer sr-only"/>
+		<div id="session-end"></div>
 
-          <div class="block h-8 rounded-full box bg-gray-400 w-14 peer-checked:bg-blue-500">
-          </div>
+		<div class="pt-2">
+			<button id="start-session"
+				class="p-4 bg-blue-500 font-extrabold hover:bg-blue-600 text-white rounded-xl">
+				Start Focus Session
+			</button>
+		</div>
 
-          <div
-            class="absolute flex items-center justify-center w-6 h-6 transition bg-white rounded-full
+		<!-- help i cant make class names -->
+		<div style="display: none;" class="pt-2 hidden" id="session-creator">
+			<div>
+				<div class="flex justify-center">
+					<!-- Duration Selector -->
+					<label for="duration" class="text-stone-700">
+						Select duration:
+					</label>
+				</div>
+				<div class="pt-4 flex justify-center gap-4">
+					<!-- minimum is 1 just for testing purposes -->
+					<input type="number" id="duration-input" name="duration" min="1" max="1440"
+						class="flex h-10 w-1/2 rounded-md border border-input bg-background px-3 py-2 text-xs ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" />
+					<p class="pt-2">
+						minutes
+					</p>
+				</div>
+
+				<!-- Ripped from: https://tailgrids.com/components/toggle-switch, style #4 -->
+				<!-- Toggle Switch -->
+				<label for="toggle"
+					class="pt-4 flex justify-center cursor-pointer select-none text-stone-300">
+					<div class="relative">
+						<!-- Checkbox -->
+						<input type="checkbox" id="toggle" class="peer sr-only" />
+
+						<div
+							class="block h-8 rounded-full box bg-gray-400 w-14 peer-checked:bg-blue-500">
+						</div>
+
+						<div class="absolute flex items-center justify-center w-6 h-6 transition bg-white rounded-full
             dot left-1 top-1 dark:bg-dark-5 peer-checked:translate-x-full peer-checked:dark:bg-white">
-          </div>
-        </div>
-      </label>
+						</div>
+					</div>
+				</label>
+				<div class="pt-4">
+					<label for="toggle" class="text-stone-700 max-w-10">
+						flip the switch to get some work done
+					</label>
+				</div>
+			</div>
 		</div>
 	</div>
 </body>
