@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 	const startSessionBtn = document.getElementById("start-session");
 
+	// start session triggers the session creator (form sorta thing to create the focus session)
 	startSessionBtn.addEventListener("click", async () => {
 		// make session-creator visible
 		startSessionBtn.style.display = "none";
@@ -20,6 +21,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 	const sessionEndElem = document.getElementById("session-end");
 
 	const isFocusModeEnabled = await chrome.storage.local.get(["focusMode"])
+
+	// if focus mode is enabled, hide the toggle and show the session end
+	// because DOM gets reset on popup close, this extra check is needed 
 	if (isFocusModeEnabled.focusMode) {
 		toggle_elem.style.display = "none";
 		startSessionBtn.style.display = "none";
@@ -39,11 +43,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 			// Duration is in minutes
 			const endTime = currTime + (duration * 60 * 1000);
 
+			// just for debugging
 			alert("Start time is: " + new Date().toLocaleString());
 			alert("End time set to: " + new Date(endTime).toLocaleString());
 
+			// cache the end time
 			await chrome.storage.local.set({ "endTime": endTime });
 
+			// hide the session creator
 			durationInputElem.style.display = "none";
 			toggle_elem.style.display = "none";
 			startSessionBtn.style.display = "block";

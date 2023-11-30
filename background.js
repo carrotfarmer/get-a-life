@@ -16,6 +16,8 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 	const currTime = new Date().getTime();
 	const isSessionLapsed = currTime > endTime;
 
+	// when current time is greater than end time (i.e. end time is passed)
+	// set focus mode to false
 	if (isSessionLapsed) {
 		await chrome.storage.local.set({ focusMode: false });
 	}
@@ -33,6 +35,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 		target: { tabId }
 	};
 
+	// inject when focusMode is true
 	if (focusMode === true) {
 		chrome.scripting.executeScript(injection);
 	}
