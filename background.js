@@ -36,7 +36,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 	};
 
 	// inject when focusMode is true
-	if (focusMode === true) {
+	if (focusMode === true && blockedUrls.some(blocked => url.includes(blocked))) {
 		chrome.scripting.executeScript(injection);
 	}
 });

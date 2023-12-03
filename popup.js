@@ -5,7 +5,6 @@ let message_elem;
 document.addEventListener("DOMContentLoaded", async () => {
 	toggle_elem = document.getElementById("toggle");
 	message_elem = document.getElementById("message");
-	toggle_elem.addEventListener("click", onToggle);
 
 	const startSessionBtn = document.getElementById("start-session");
 
@@ -31,11 +30,31 @@ document.addEventListener("DOMContentLoaded", async () => {
 		const endTime = await chrome.storage.local.get(["endTime"]);
 
 		sessionEndElem.style.display = "block";
-		sessionEndElem.innerText = "Session ends at: " + new Date(endTime.endTime).toLocaleString();
+
+		let counter = Math.floor((endTime.endTime - new Date().getTime()) / 1000);
+
+		// Display countdown
+		let hours = 0;
+		let minutes = 0;
+		let seconds = 0;
+
+		setInterval(() => {
+			if (counter > 0) {
+				counter--;
+				hours = Math.floor(counter / 3600);
+				minutes = Math.floor((counter - (hours * 3600)) / 60);
+				seconds = counter - (hours * 3600) - (minutes * 60);
+			}
+
+			document.getElementById("hours").style.setProperty('--value', hours);
+			document.getElementById("minutes").style.setProperty('--value', minutes);
+			document.getElementById("seconds").style.setProperty('--value', seconds);
+		}, 1000)
 	}
 
-	toggle_elem.addEventListener("click", async () => {
+	toggle_elem.addEventListener("click", async (e) => {
 		const duration = durationInputElem.value;
+		e.preventDefault();
 
 		if (duration) {
 			const currTime = new Date().getTime();
@@ -59,17 +78,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 			// initialize checkbox value based on current focus mode
 			const { focusMode } = await chrome.storage.local.get(["focusMode"]);
-			setMode(focusMode);
+			setMode(!focusMode);
+
+			// force update
+			window.close();
 		} else {
 			alert("enter a duration dawg");
 		}
 	});
 });
-
-const onToggle = async () => {
-	const { focusMode } = await chrome.storage.local.get(["focusMode"]);
-	setMode(!focusMode);
-}
 
 const setMode = async (mode) => {
 	await chrome.storage.local.set({ focusMode: mode });
