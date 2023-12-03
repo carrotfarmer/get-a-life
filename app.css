@@ -762,11 +762,6 @@ video {
   color: rgb(120 113 108 / var(--tw-text-opacity));
 }
 
-.text-stone-700 {
-  --tw-text-opacity: 1;
-  color: rgb(68 64 60 / var(--tw-text-opacity));
-}
-
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
