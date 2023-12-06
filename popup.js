@@ -92,7 +92,7 @@ const startCounter = async () => {
   let minutes = 0;
   let seconds = 0;
 
-  interval = setInterval(_ => {
+  const f = () => {
     counter--;
     hours = Math.floor(counter / 3600);
     minutes = Math.floor((counter - hours * 3600) / 60);
@@ -106,5 +106,9 @@ const startCounter = async () => {
     if (counter <= 0) {
       setMode(false);
     }
-  }, 1000);
+  }
+  // Call it once first so that there isn't a delay.
+  // without it, the first invocation will be a second later, by the interval
+  f();
+  interval = setInterval(f, 1000);
 }
