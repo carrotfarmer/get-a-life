@@ -1,99 +1,110 @@
 // DOM elements
-let toggle_elem;
-let message_elem;
+let messageElem;
+let startBtn;
+let durationInputElem;
+let countdownElem;
 
 document.addEventListener("DOMContentLoaded", async () => {
-  toggle_elem = document.getElementById("toggle");
-  message_elem = document.getElementById("message");
-
-  const startSessionBtn = document.getElementById("start-session");
+  // Get Elements
+  messageElem = document.getElementById("message");
+  startBtn = document.getElementById("start-btn");
+  durationInputElem = document.getElementById("duration-input");
+  countdownElem = document.getElementById("countdown");
 
   // start session triggers the session creator (form sorta thing to create the focus session)
-  startSessionBtn.addEventListener("click", async () => {
-    // make session-creator visible
-    startSessionBtn.style.display = "none";
-    document.getElementById("session-creator").style.display = "block";
+  startBtn.addEventListener("click", async () => {
+    setMode(true);
   });
 
-  const durationInputElem = document.getElementById("duration-input");
+  // Initialize
+  const { focusMode } = await chrome.storage.local.get(["focusMode"]);
+  setMode(focusMode);
+  
 
-  const sessionEndElem = document.getElementById("session-end");
-
-  const isFocusModeEnabled = await chrome.storage.local.get(["focusMode"]);
-
-  // if focus mode is enabled, hide the toggle and show the session end
-  // because DOM gets reset on popup close, this extra check is needed
-  if (isFocusModeEnabled.focusMode) {
-    toggle_elem.style.display = "none";
-    startSessionBtn.style.display = "none";
-
-    const endTime = await chrome.storage.local.get(["endTime"]);
-
-    sessionEndElem.style.display = "block";
-
-    let counter = Math.floor((endTime.endTime - new Date().getTime()) / 1000);
-
-    // Display countdown
-    let hours = 0;
-    let minutes = 0;
-    let seconds = 0;
-
-    setInterval(() => {
-      if (counter > 0) {
-        counter--;
-        hours = Math.floor(counter / 3600);
-        minutes = Math.floor((counter - hours * 3600) / 60);
-        seconds = counter - hours * 3600 - minutes * 60;
-      }
-
-      document.getElementById("hours").style.setProperty("--value", hours);
-      document.getElementById("minutes").style.setProperty("--value", minutes);
-      document.getElementById("seconds").style.setProperty("--value", seconds);
-    }, 1000);
-  }
-
-  toggle_elem.addEventListener("click", async (e) => {
-    const duration = durationInputElem.value;
+  startBtn.addEventListener("click", async (e) => {
     e.preventDefault();
 
-    if (duration) {
-      const currTime = new Date().getTime();
+    const duration = durationInputElem.value;
 
-      // Duration is in minutes
-      const endTime = currTime + duration * 60 * 1000;
-
-      // just for debugging
-      alert("Start time is: " + new Date().toLocaleString());
-      alert("End time set to: " + new Date(endTime).toLocaleString());
-
-      // cache the end time
-      await chrome.storage.local.set({ endTime: endTime });
-
-      // hide the session creator
-      durationInputElem.style.display = "none";
-      toggle_elem.style.display = "none";
-      startSessionBtn.style.display = "block";
-
-      sessionEndElem.innerText =
-        "Session ends at: " + new Date(endTime).toLocaleString();
-
-      // initialize checkbox value based on current focus mode
-      const { focusMode } = await chrome.storage.local.get(["focusMode"]);
-      setMode(!focusMode);
-
-      // force update
-      window.close();
-    } else {
-      alert("enter a duration dawg");
+    if (!duration) {
+      alert(`no duration ${duration}`);
+      return;
     }
+
+    // Duration is in minutes
+    const endTime = Date.now() + duration * 60 * 1000;
+
+    console.log("End time set to: " + new Date(endTime).toLocaleString());
+
+    // Set States
+    setMode(true, endTime);
   });
 });
 
-const setMode = async (mode) => {
+
+let interval;
+const setMode = async (mode, endTime) => {
+  // Default: 1 minute
   await chrome.storage.local.set({ focusMode: mode });
 
-  toggle_elem.checked = mode;
-  message_elem.innerText = mode
+  // If true and has time, set time.
+  if (mode && endTime !== undefined) {
+    await chrome.storage.local.set({ endTime });
+  }
+  // If false, clear endTime.
+  if (!mode) {
+    clearInterval(interval);
+    await chrome.storage.local.remove("endTime");
+  }
+
+  startBtn.disabled = mode;
+  startBtn.innerText = mode
     ? "Locked in!"
-    : "Need help focusing? Flip the switch!";
+    : "Begin!";
+  countdownElem.style.display = mode ? 'block' : 'none';
+  durationInputElem.style.display = mode ? 'none' : 'block';
+  messageElem.innerText = mode
+    ? "Locked in!"
+    : "Need help focusing? Start your session!";
+
+  if (mode) {
+    startCounter();
+  }
 };
+
+const startCounter = async () => {
+
+  // To avoid repeating intervals
+  if (interval !== undefined) {
+    clearInterval(interval);
+  }
+
+  const { endTime } = await chrome.storage.local.get(["endTime"]);
+  let counter = Math.floor((endTime - new Date().getTime()) / 1000);
+
+  // If already over, set false.
+  if (counter <= 0) {
+    setMode(false);
+  }
+
+  // Display countdown
+  let hours = 0;
+  let minutes = 0;
+  let seconds = 0;
+
+  interval = setInterval(_ => {
+    counter--;
+    hours = Math.floor(counter / 3600);
+    minutes = Math.floor((counter - hours * 3600) / 60);
+    seconds = counter - hours * 3600 - minutes * 60;
+
+    document.getElementById("hours").style.setProperty("--value", hours);
+    document.getElementById("minutes").style.setProperty("--value", minutes);
+    document.getElementById("seconds").style.setProperty("--value", seconds);
+
+    // on end
+    if (counter <= 0) {
+      setMode(false);
+    }
+  }, 1000);
+}
