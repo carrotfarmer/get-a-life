@@ -13,8 +13,6 @@ A chrome extension that will help you (yes, you) to get a god damn life.
 - you will NOT be able to prematurely terminate the session
 - which means, you will finally get some work done instead of watching youtube.
 
-in conclusion, get-a-life aims to be the father you never had. 
-
 ## installation
 
 1. clone this github repo
