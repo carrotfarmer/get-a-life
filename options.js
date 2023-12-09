@@ -41,6 +41,7 @@ const loadList = async () => {
 
     // remove from list on click
     div.addEventListener("click", async () => {
+      if (confirm(`Remove ${url} from blocklist?`) === false) return;
       const { blockedUrls } = await chrome.storage.local.get(["blockedUrls"]);
       blockedUrls.splice(blockedUrls.indexOf(url), 1);
       chrome.storage.local.set({ blockedUrls });
