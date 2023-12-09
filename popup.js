@@ -24,7 +24,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const { focusMode } = await chrome.storage.local.get(["focusMode"]);
   setMode(focusMode);
 
-
   startBtn.addEventListener("click", async (e) => {
     e.preventDefault();
 
@@ -45,7 +44,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 });
 
-
 let interval;
 const setMode = async (mode, endTime) => {
   // Default: 1 minute
@@ -62,13 +60,11 @@ const setMode = async (mode, endTime) => {
   }
 
   startBtn.disabled = mode;
-  startBtn.innerText = mode
-    ? "Locked in!"
-    : "Begin!";
-  countdownElem.style.display = mode ? 'block' : 'none';
-  endTimeElem.style.display = mode ? 'block' : 'none';
-  durationInputElem.style.display = mode ? 'none' : 'block';
-  durationInputLabel.style.display = mode ? 'none' : 'block';
+  startBtn.innerText = mode ? "Locked in!" : "Begin!";
+  countdownElem.style.display = mode ? "block" : "none";
+  endTimeElem.style.display = mode ? "block" : "none";
+  durationInputElem.style.display = mode ? "none" : "block";
+  durationInputLabel.style.display = mode ? "none" : "block";
   messageElem.innerText = mode
     ? "Locked in!"
     : "Need help focusing? Start your session!";
@@ -79,7 +75,6 @@ const setMode = async (mode, endTime) => {
 };
 
 const startCounter = async () => {
-
   // To avoid repeating intervals
   if (interval !== undefined) {
     clearInterval(interval);
@@ -108,15 +103,17 @@ const startCounter = async () => {
     document.getElementById("minutes").style.setProperty("--value", minutes);
     document.getElementById("seconds").style.setProperty("--value", seconds);
 
-    endTimeElem.innerText = `Sessions ends at:\n ${new Date(endTime).toLocaleString()}`;
+    endTimeElem.innerText = `Sessions ends at:\n ${new Date(
+      endTime
+    ).toLocaleString()}`;
 
     // on end
     if (counter <= 0) {
       setMode(false);
     }
-  }
+  };
   // Call it once first so that there isn't a delay.
   // without it, the first invocation will be a second later, by the interval
   f();
   interval = setInterval(f, 1000);
-}
+};
